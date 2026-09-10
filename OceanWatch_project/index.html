@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>OceanWatch AI | Maritime Intelligence</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Leaflet Map -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <!-- Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- =========================================================
+     APPLICATION
+========================================================= -->
+
+<div class="app">
+
+    <!-- =====================================================
+         TOP NAVIGATION
+    ====================================================== -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                <i class="fa-solid fa-water"></i>
+            </div>
+
+            <div class="brand-text">
+                <h1>OCEANWATCH <span>AI</span></h1>
+                <p>MARITIME INTELLIGENCE PLATFORM</p>
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <a href="#" class="nav-item active">
+                <i class="fa-solid fa-crosshairs"></i>
+                Monitor
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                Investigate
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-ship"></i>
+                Vessels
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-droplet"></i>
+                Detections
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-file-lines"></i>
+                Reports
+            </a>
+
+        </nav>
+
+
+        <div class="top-actions">
+
+            <div class="system-status">
+                <span class="status-dot"></span>
+                SYSTEM ONLINE
+            </div>
+
+            <button class="icon-button">
+                <i class="fa-regular fa-bell"></i>
+            </button>
+
+            <div class="user-avatar">
+                OW
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-container">
+
+
+        <!-- =================================================
+             LEFT CONTROL PANEL
+        ================================================== -->
+
+        <aside class="left-panel">
+
+            <div class="panel-heading">
+
+                <div>
+                    <span class="small-label">MISSION CONTROL</span>
+                    <h2>Investigation</h2>
+                </div>
+
+                <button class="collapse-btn">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
+            </div>
+
+
+            <!-- Investigation status -->
+
+            <div class="investigation-status">
+
+                <div class="status-icon">
+                    <i class="fa-solid fa-satellite"></i>
+                </div>
+
+                <div>
+                    <span>ACTIVE ANALYSIS</span>
+                    <strong>OS-2026-001</strong>
+                </div>
+
+                <span class="pulse"></span>
+
+            </div>
+
+
+            <!-- Search -->
+
+            <div class="control-section">
+
+                <label>SEARCH AREA</label>
+
+                <div class="search-box">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    <input
+                        type="text"
+                        id="locationSearch"
+                        placeholder="Coordinates or location"
+                    >
+
+                    <button onclick="searchLocation()">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Date -->
+
+            <div class="control-section">
+
+                <label>OBSERVATION DATE</label>
+
+                <div class="date-input">
+
+                    <i class="fa-regular fa-calendar"></i>
+
+                    <input
+                        type="date"
+                        id="observationDate"
+                        value="2026-09-10"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- Detection confidence -->
+
+            <div class="control-section">
+
+                <div class="label-row">
+
+                    <label>MIN. CONFIDENCE</label>
+
+                    <span id="confidenceValue">70%</span>
+
+                </div>
+
+                <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="70"
+                    id="confidenceSlider"
+                    oninput="updateConfidence(this.value)"
+                >
+
+            </div>
+
+
+            <!-- Layers -->
+
+            <div class="control-section">
+
+                <label>MAP LAYERS</label>
+
+
+                <div class="layer-list">
+
+                    <label class="layer-item">
+
+                        <span>
+                            <i class="fa-solid fa-satellite"></i>
+                            Satellite Imagery
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            checked
+                            onchange="toggleSatellite()"
+                        >
+
+                        <span class="toggle"></span>
+
+                    </label>
+
+
+                    <label class="layer-item">
+
+                        <span>
+                            <i class="fa-solid fa-oil-well"></i>
+                            Oil Slick
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            checked
+                            onchange="toggleOil()"
+                        >
+
+                        <span class="toggle"></span>
+
+                    </label>
+
+
+                    <label class="layer-item">
+
+                        <span>
+                            <i class="fa-solid fa-ship"></i>
+                            AIS Vessels
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            checked
+                            onchange="toggleVessels()"
+                        >
+
+                        <span class="toggle"></span>
+
+                    </label>
+
+
+                    <label class="layer-item">
+
+                        <span>
+                            <i class="fa-solid fa-route"></i>
+                            Vessel Tracks
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            checked
+                            onchange="toggleTracks()"
+                        >
+
+                        <span class="toggle"></span>
+
+                    </label>
+
+
+                    <label class="layer-item">
+
+                        <span>
+                            <i class="fa-solid fa-wind"></i>
+                            Wind Field
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            checked
+                        >
+
+                        <span class="toggle"></span>
+
+                    </label>
+
+
+                    <label class="layer-item">
+
+                        <span>
+                            <i class="fa-solid fa-water"></i>
+                            Ocean Current
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            checked
+                        >
+
+                        <span class="toggle"></span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- Analysis pipeline -->
+
+            <div class="control-section">
+
+                <label>ANALYSIS PIPELINE</label>
+
+                <div class="pipeline">
+
+                    <div class="pipeline-item completed">
+
+                        <span class="pipeline-number">01</span>
+
+                        <div>
+                            <strong>Satellite Acquisition</strong>
+                            <small>Sentinel-1 SAR</small>
+                        </div>
+
+                        <i class="fa-solid fa-check"></i>
+
+                    </div>
+
+
+                    <div class="pipeline-line"></div>
+
+
+                    <div class="pipeline-item completed">
+
+                        <span class="pipeline-number">02</span>
+
+                        <div>
+                            <strong>Oil Detection</strong>
+                            <small>AI segmentation</small>
+                        </div>
+
+                        <i class="fa-solid fa-check"></i>
+
+                    </div>
+
+
+                    <div class="pipeline-line"></div>
+
+
+                    <div class="pipeline-item active">
+
+                        <span class="pipeline-number">03</span>
+
+                        <div>
+                            <strong>Source Backtracking</strong>
+                            <small>Particle simulation</small>
+                        </div>
+
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    </div>
+
+
+                    <div class="pipeline-line"></div>
+
+
+                    <div class="pipeline-item">
+
+                        <span class="pipeline-number">04</span>
+
+                        <div>
+                            <strong>AIS Correlation</strong>
+                            <small>Vessel attribution</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="pipeline-line"></div>
+
+
+                    <div class="pipeline-item">
+
+                        <span class="pipeline-number">05</span>
+
+                        <div>
+                            <strong>Final Assessment</strong>
+                            <small>Evidence ranking</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="investigate-button"
+                onclick="runInvestigation()"
+            >
+
+                <i class="fa-solid fa-play"></i>
+
+                RUN INVESTIGATION
+
+            </button>
+
+        </aside>
+
+
+
+        <!-- =================================================
+             MAP AREA
+        ================================================== -->
+
+        <section class="map-section">
+
+
+            <!-- Map header -->
+
+            <div class="map-header">
+
+                <div>
+
+                    <span class="small-label">LIVE MARITIME VIEW</span>
+
+                    <h2>
+                        Bay of Bengal
+                        <span class="coordinates">
+                            16.42°N 82.73°E
+                        </span>
+                    </h2>
+
+                </div>
+
+
+                <div class="map-controls">
+
+                    <button
+                        class="map-control active"
+                        onclick="setMapMode('satellite')"
+                    >
+                        <i class="fa-solid fa-satellite"></i>
+                        SAT
+                    </button>
+
+                    <button
+                        class="map-control"
+                        onclick="setMapMode('terrain')"
+                    >
+                        <i class="fa-solid fa-earth-asia"></i>
+                        MAP
+                    </button>
+
+                    <button class="map-control">
+                        <i class="fa-solid fa-expand"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Map -->
+
+            <div id="map"></div>
+
+
+            <!-- Map floating status -->
+
+            <div class="map-status">
+
+                <div class="map-status-item">
+
+                    <span class="legend-dot oil"></span>
+
+                    Oil Slick
+
+                </div>
+
+                <div class="map-status-item">
+
+                    <span class="legend-dot vessel"></span>
+
+                    AIS Vessel
+
+                </div>
+
+                <div class="map-status-item">
+
+                    <span class="legend-line"></span>
+
+                    Vessel Track
+
+                </div>
+
+                <div class="map-status-item">
+
+                    <span class="legend-origin">★</span>
+
+                    Probable Origin
+
+                </div>
+
+            </div>
+
+
+            <!-- Coordinates -->
+
+            <div class="map-coordinates">
+                LAT 16.4203° &nbsp;&nbsp; LON 82.7314°
+            </div>
+
+
+            <!-- Map zoom -->
+
+            <div class="custom-zoom">
+
+                <button onclick="map.zoomIn()">
+                    +
+                </button>
+
+                <button onclick="map.zoomOut()">
+                    −
+                </button>
+
+                <button onclick="resetMap()">
+                    <i class="fa-solid fa-crosshairs"></i>
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RIGHT INTELLIGENCE PANEL
+        ================================================== -->
+
+        <aside class="right-panel">
+
+
+            <!-- Detection -->
+
+            <div class="right-section">
+
+                <div class="section-title">
+
+                    <div>
+
+                        <span class="small-label">
+                            DETECTION
+                        </span>
+
+                        <h2>
+                            Oil Slick
+                            <span class="alert-badge">
+                                HIGH
+                            </span>
+                        </h2>
+
+                    </div>
+
+                    <span class="live-indicator">
+                        ● DETECTED
+                    </span>
+
+                </div>
+
+
+                <div class="confidence-card">
+
+                    <div class="confidence-circle">
+
+                        <div>
+                            <strong>94</strong>
+                            <span>%</span>
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="card-label">
+                            AI CONFIDENCE
+                        </span>
+
+                        <strong class="confidence-text">
+                            HIGH CONFIDENCE
+                        </strong>
+
+                        <small>
+                            Sentinel-1 VV + VH
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stats-grid">
+
+                    <div class="mini-stat">
+
+                        <span>AREA</span>
+
+                        <strong>
+                            12.8
+                            <small>km²</small>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="mini-stat">
+
+                        <span>LENGTH</span>
+
+                        <strong>
+                            8.7
+                            <small>km</small>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="mini-stat">
+
+                        <span>WIDTH</span>
+
+                        <strong>
+                            1.4
+                            <small>km</small>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="mini-stat">
+
+                        <span>ORIENTATION</span>
+
+                        <strong>
+                            63°
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Origin -->
+
+            <div class="right-section origin-section">
+
+                <div class="section-title">
+
+                    <div>
+
+                        <span class="small-label">
+                            BACKTRACK ANALYSIS
+                        </span>
+
+                        <h2>
+                            Probable Origin
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-location-crosshairs"></i>
+
+                </div>
+
+
+                <div class="origin-card">
+
+                    <div class="origin-marker">
+                        ★
+                    </div>
+
+                    <div class="origin-info">
+
+                        <span>ESTIMATED SOURCE REGION</span>
+
+                        <strong>
+                            16.42°N
+                            <br>
+                            82.73°E
+                        </strong>
+
+                        <small>
+                            Radius: 2.3 km
+                        </small>
+
+                    </div>
+
+                    <div class="origin-confidence">
+
+                        <span>CONFIDENCE</span>
+
+                        <strong>82%</strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="release-time">
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    <div>
+
+                        <span>ESTIMATED RELEASE WINDOW</span>
+
+                        <strong>
+                            09:18 — 09:34 UTC
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Vessel ranking -->
+
+            <div class="right-section vessel-section">
+
+                <div class="section-title">
+
+                    <div>
+
+                        <span class="small-label">
+                            AIS CORRELATION
+                        </span>
+
+                        <h2>
+                            Candidate Vessels
+                        </h2>
+
+                    </div>
+
+                    <span class="candidate-count">
+                        37 FOUND
+                    </span>
+
+                </div>
+
+
+                <!-- Vessel 1 -->
+
+                <div
+                    class="vessel-card selected"
+                    onclick="selectVessel('vesselA')"
+                >
+
+                    <div class="vessel-rank">
+                        #1
+                    </div>
+
+                    <div class="vessel-icon">
+                        <i class="fa-solid fa-ship"></i>
+                    </div>
+
+                    <div class="vessel-info">
+
+                        <strong>
+                            VESSEL A
+                        </strong>
+
+                        <span>
+                            Cargo Ship
+                        </span>
+
+                        <small>
+                            MMSI 123456789
+                        </small>
+
+                    </div>
+
+                    <div class="vessel-score">
+
+                        <strong>91%</strong>
+
+                        <span>MATCH</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Vessel 2 -->
+
+                <div
+                    class="vessel-card"
+                    onclick="selectVessel('vesselB')"
+                >
+
+                    <div class="vessel-rank">
+                        #2
+                    </div>
+
+                    <div class="vessel-icon">
+                        <i class="fa-solid fa-ship"></i>
+                    </div>
+
+                    <div class="vessel-info">
+
+                        <strong>
+                            VESSEL B
+                        </strong>
+
+                        <span>
+                            Tanker
+                        </span>
+
+                        <small>
+                            MMSI 987654321
+                        </small>
+
+                    </div>
+
+                    <div class="vessel-score">
+
+                        <strong>65%</strong>
+
+                        <span>MATCH</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Vessel 3 -->
+
+                <div
+                    class="vessel-card"
+                    onclick="selectVessel('vesselC')"
+                >
+
+                    <div class="vessel-rank">
+                        #3
+                    </div>
+
+                    <div class="vessel-icon">
+                        <i class="fa-solid fa-ship"></i>
+                    </div>
+
+                    <div class="vessel-info">
+
+                        <strong>
+                            VESSEL C
+                        </strong>
+
+                        <span>
+                            Container Ship
+                        </span>
+
+                        <small>
+                            MMSI 456789123
+                        </small>
+
+                    </div>
+
+                    <div class="vessel-score">
+
+                        <strong>46%</strong>
+
+                        <span>MATCH</span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="view-all-button"
+                    onclick="openCandidates()"
+                >
+
+                    VIEW ALL 37 CANDIDATES
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- Evidence -->
+
+            <div class="right-section evidence-section">
+
+                <div class="section-title">
+
+                    <div>
+
+                        <span class="small-label">
+                            TOP CANDIDATE
+                        </span>
+
+                        <h2>
+                            Evidence
+                        </h2>
+
+                    </div>
+
+                    <span class="evidence-score">
+                        91%
+                    </span>
+
+                </div>
+
+
+                <div class="evidence-list">
+
+                    <div class="evidence-item">
+
+                        <div class="evidence-icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Spatial Proximity
+                            </strong>
+
+                            <span>
+                                1.7 km from origin
+                            </span>
+
+                        </div>
+
+                        <b>
+                            94%
+                        </b>
+
+                    </div>
+
+
+                    <div class="evidence-item">
+
+                        <div class="evidence-icon">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Temporal Match
+                            </strong>
+
+                            <span>
+                                8 min difference
+                            </span>
+
+                        </div>
+
+                        <b>
+                            91%
+                        </b>
+
+                    </div>
+
+
+                    <div class="evidence-item">
+
+                        <div class="evidence-icon">
+                            <i class="fa-solid fa-route"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Trajectory Match
+                            </strong>
+
+                            <span>
+                                Heading aligned
+                            </span>
+
+                        </div>
+
+                        <b>
+                            88%
+                        </b>
+
+                    </div>
+
+
+                    <div class="evidence-item">
+
+                        <div class="evidence-icon">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Behaviour Anomaly
+                            </strong>
+
+                            <span>
+                                Speed reduction detected
+                            </span>
+
+                        </div>
+
+                        <b>
+                            92%
+                        </b>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="evidence-button"
+                    onclick="openEvidence()"
+                >
+
+                    <i class="fa-solid fa-file-shield"></i>
+
+                    VIEW FULL EVIDENCE
+
+                </button>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <!-- =====================================================
+         BOTTOM STATUS BAR
+    ====================================================== -->
+
+    <footer class="bottom-bar">
+
+        <div class="bottom-stat">
+
+            <span class="bottom-icon">
+                <i class="fa-solid fa-ship"></i>
+            </span>
+
+            <div>
+
+                <span>VESSELS TRACKED</span>
+
+                <strong>
+                    1,247
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="bottom-stat">
+
+            <span class="bottom-icon">
+                <i class="fa-solid fa-droplet"></i>
+            </span>
+
+            <div>
+
+                <span>OIL DETECTIONS</span>
+
+                <strong>
+                    08
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="bottom-stat">
+
+            <span class="bottom-icon">
+                <i class="fa-solid fa-bullseye"></i>
+            </span>
+
+            <div>
+
+                <span>ACTIVE INVESTIGATIONS</span>
+
+                <strong>
+                    03
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="bottom-stat">
+
+            <span class="bottom-icon">
+                <i class="fa-solid fa-satellite"></i>
+            </span>
+
+            <div>
+
+                <span>SATELLITE</span>
+
+                <strong>
+                    SENTINEL-1
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="bottom-stat">
+
+            <span class="bottom-icon">
+                <i class="fa-solid fa-cloud"></i>
+            </span>
+
+            <div>
+
+                <span>WEATHER</span>
+
+                <strong>
+                    18.4 km/h
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="data-time">
+
+            LAST DATA UPDATE
+
+            <strong>
+                09:42:18 UTC
+            </strong>
+
+        </div>
+
+    </footer>
+
+</div>
+
+
+
+<!-- =========================================================
+     EVIDENCE MODAL
+========================================================= -->
+
+<div
+    class="modal-overlay"
+    id="evidenceModal"
+    onclick="closeModal(event)"
+>
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="small-label">
+                    INVESTIGATION REPORT
+                </span>
+
+                <h2>
+                    Vessel A — Evidence Assessment
+                </h2>
+
+            </div>
+
+            <button onclick="closeEvidence()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="modal-score">
+
+                <div class="large-score">
+                    91%
+                </div>
+
+                <div>
+
+                    <span>
+                        OVERALL CORRELATION
+                    </span>
+
+                    <strong>
+                        HIGH PRIORITY CANDIDATE
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="evidence-grid">
+
+                <div class="evidence-large-card">
+
+                    <span>SPATIAL PROXIMITY</span>
+
+                    <strong>94%</strong>
+
+                    <p>
+                        Vessel was approximately
+                        <b>1.7 km</b> from the
+                        estimated spill origin.
+                    </p>
+
+                </div>
+
+
+                <div class="evidence-large-card">
+
+                    <span>TEMPORAL CORRELATION</span>
+
+                    <strong>91%</strong>
+
+                    <p>
+                        AIS position matches the
+                        estimated release window
+                        within <b>8 minutes</b>.
+                    </p>
+
+                </div>
+
+
+                <div class="evidence-large-card">
+
+                    <span>TRAJECTORY</span>
+
+                    <strong>88%</strong>
+
+                    <p>
+                        Vessel heading is consistent
+                        with the reconstructed oil
+                        movement direction.
+                    </p>
+
+                </div>
+
+
+                <div class="evidence-large-card">
+
+                    <span>BEHAVIOURAL ANOMALY</span>
+
+                    <strong>92%</strong>
+
+                    <p>
+                        Significant reduction in vessel
+                        speed detected near the
+                        estimated release zone.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="warning-box">
+
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                <div>
+
+                    <strong>
+                        INVESTIGATIVE LEAD — NOT PROOF OF LIABILITY
+                    </strong>
+
+                    <p>
+                        Vessel ranking is based on
+                        spatio-temporal correlation,
+                        trajectory consistency and
+                        behavioural indicators.
+                        Further investigation is required.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button class="secondary-button">
+                <i class="fa-solid fa-download"></i>
+                EXPORT REPORT
+            </button>
+
+            <button
+                class="primary-button"
+                onclick="closeEvidence()"
+            >
+                CLOSE
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- Leaflet -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Application JS -->
+
+<script src="script.js"></script>
+
+</body>
+</html>
